@@ -20,14 +20,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.trackmysleepquality.R
-import com.example.android.trackmysleepquality.convertDurationToFormatted
-import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 import androidx.recyclerview.widget.ListAdapter
 import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
-class SleepNightAdapter : //RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
+class SleepNightAdapter(val clickListener: SleepNightListener) :
                             ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
                                     SleepNightDiffCallback())
 {
@@ -40,8 +37,9 @@ class SleepNightAdapter : //RecyclerView.Adapter<SleepNightAdapter.ViewHolder>()
 //    override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+        //val item = getItem(position)
+        //holder.bind(item)
+        holder.bind(getItem(position)!!, clickListener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -53,8 +51,9 @@ class SleepNightAdapter : //RecyclerView.Adapter<SleepNightAdapter.ViewHolder>()
             RecyclerView.ViewHolder(binding.root) {
 
 
-        fun bind(item: SleepNight) {
+        fun bind(item: SleepNight, clickListener: SleepNightListener) {
             binding.sleep = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
         }
 
@@ -81,12 +80,6 @@ class SleepNightDiffCallback: DiffUtil.ItemCallback<SleepNight>() {
 
 }
 
-// TODO (03) Create a variable, data, that holds a list of SleepNight.
-
-// TODO (04) Override getItemCount() to return the total number of items in the data set.
-
-// TODO (05) Override onBindViewHolder() and have it update the contents of the
-// ViewHolder to reflect the item at the given position.
-
-// TODO (06) Override onCreateViewHolder(). We'll complete this method
-// in a later exercise.
+class SleepNightListener(val clickListener: (sleepId: Long) -> Unit) {
+    fun onClick(night: SleepNight) = clickListener(night.nightId)
+}
